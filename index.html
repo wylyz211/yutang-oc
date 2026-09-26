@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>屿棠 · 云海邮差 | 角色主页</title>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
+<style>
+  :root{
+    --mint:#7FD8C4; --teal:#0F6E56; --amber:#BA7517; --cream:#FAF7F0;
+    --ink:#2C2C2A; --muted:#6B6B66; --card:#FFFFFF; --line:rgba(44,44,42,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--cream);color:var(--ink);line-height:1.7}
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:24px;padding:14px 32px;background:rgba(250,247,240,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav .logo{font-weight:600;font-size:17px;color:var(--teal);letter-spacing:2px}
+  nav a{color:var(--muted);text-decoration:none;font-size:14px}
+  nav a:hover{color:var(--teal)}
+  nav .sp{flex:1}
+  #hero{position:relative;height:100vh;min-height:560px;background:url('assets/sky.jpg') center/cover no-repeat}
+  #hero canvas{display:block;width:100%;height:100%}
+  .hero-static{display:none;position:absolute;inset:0;overflow:hidden}
+  .hero-static img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:88%;filter:drop-shadow(0 12px 30px rgba(15,110,86,.25));animation:floaty 4s ease-in-out infinite}
+  body.no3d .hero-static{display:block}
+  @keyframes floaty{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
+  .hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 8vw;pointer-events:none}
+  .hero-copy h1{font-size:clamp(44px,7vw,84px);font-weight:600;color:var(--teal);letter-spacing:6px;text-shadow:0 2px 24px rgba(255,255,255,.9)}
+  .hero-copy .quote{margin-top:14px;font-size:clamp(15px,1.6vw,20px);color:var(--ink);background:rgba(255,255,255,.75);padding:8px 18px;border-radius:99px;border:1px solid var(--line)}
+  .hero-copy .hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);background:rgba(255,255,255,.7);padding:6px 16px;border-radius:99px}
+  .tag{position:absolute;top:86px;right:5vw;font-size:12px;color:var(--teal);background:rgba(255,255,255,.8);border:1px solid var(--mint);padding:4px 12px;border-radius:99px}
+  section{max-width:1080px;margin:0 auto;padding:88px 24px}
+  .sec-title{font-size:26px;font-weight:600;color:var(--teal);margin-bottom:8px}
+  .sec-sub{color:var(--muted);font-size:14px;margin-bottom:36px}
+  .profile-grid{display:grid;grid-template-columns:280px 1fr;gap:32px;align-items:start}
+  .profile-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .profile-card img{width:100%;display:block}
+  .profile-card .cap{padding:12px 16px;font-size:13px;color:var(--muted);text-align:center}
+  .traits{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 26px}
+  .traits span{background:#EAF6F1;color:var(--teal);border:1px solid var(--mint);border-radius:99px;padding:5px 14px;font-size:13px}
+  .profile-text p{margin-bottom:14px;font-size:15px}
+  .profile-text b{color:var(--teal)}
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .gallery .item{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .25s}
+  .gallery .item:hover{transform:translateY(-4px)}
+  .gallery img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+  .gallery .item.wide{grid-column:span 1}
+  .gallery .item.main{grid-row:span 2}
+  .gallery .item.main img{aspect-ratio:1024/1536;height:100%;object-fit:cover}
+  .gallery .cap{padding:10px 12px;font-size:13px;color:var(--muted)}
+  #lb{position:fixed;inset:0;background:rgba(20,20,20,.72);display:none;align-items:center;justify-content:center;z-index:99;cursor:zoom-out}
+  #lb img{max-width:88vw;max-height:88vh;border-radius:12px}
+  .video-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:760px}
+  video{width:100%;border-radius:10px;display:block}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:36px 24px;text-align:center;color:var(--muted);font-size:13px}
+  footer b{color:var(--teal)}
+  @media(max-width:760px){
+    .profile-grid{grid-template-columns:1fr}
+    .gallery{grid-template-columns:repeat(2,1fr)}
+    nav{padding:12px 16px;gap:14px}
+    section{padding:64px 18px}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <span class="logo">屿棠</span>
+  <a href="#profile">档案</a><a href="#gallery">图鉴</a><a href="#motion">动态</a>
+  <span class="sp"></span>
+  <a href="#hero">回到云海</a>
+</nav>
+
+<header id="hero">
+  <div class="hero-static"><img src="assets/cutout.png" alt="屿棠"></div>
+  <div class="hero-copy">
+    <h1>屿 棠</h1>
+    <div class="quote">「下一封信，一定送到云海的那一头。」</div>
+    <div class="hint">拖拽旋转 · 滚轮缩放 · 与屿棠在云海相遇</div>
+  </div>
+  <div class="tag">WebGL 2.5D 立体展示</div>
+</header>
+
+<section id="profile">
+  <h2 class="sec-title">角色档案</h2>
+  <p class="sec-sub">云海邮差 · 浮空群岛邮政局 003 号邮递员</p>
+  <div class="profile-grid">
+    <div class="profile-card">
+      <img src="assets/main.png" alt="屿棠立绘">
+      <div class="cap">官方立绘 · 全身</div>
+    </div>
+    <div class="profile-text">
+      <div class="traits"><span>元气</span><span>方向感为负</span><span>信件狂热</span><span>羽毛耳饰</span><span>薄荷青</span></div>
+      <p><b>外貌：</b>齐肩薄荷青渐变短发，琥珀色的大眼睛，右耳别着白色羽毛耳饰——那是邮政局给每位邮差的「信风罗盘」，据说迷路时会轻轻颤动（虽然对屿棠好像不太灵）。</p>
+      <p><b>性格：</b>元气满满的爱笑少女，好奇心比邮差包还重。优点是无论暴雨还是逆风，答应送的信一定会送到；缺点是……在没有信风罗盘的地方，她能把「直走」走出九种走法。</p>
+      <p><b>世界观：</b>世界是一片无边云海，人们住在浮空群岛上。岛屿之间没有桥，只有邮差——他们乘着信风，把思念装进帆布邮差包，在群岛之间穿梭飞行。屿棠是 003 号邮递员，也是局里最年轻、笑声最大的一位。</p>
+      <p><b>口头禅：</b>「下一封信，一定送到云海的那一头。」</p>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <h2 class="sec-title">表情图鉴</h2>
+  <p class="sec-sub">点击查看大图 · AI 生成，角色一致性锁定</p>
+  <div class="gallery">
+    <div class="item main"><img src="assets/main.png" alt="立绘"><div class="cap">主立绘</div></div>
+    <div class="item"><img src="assets/exp_happy.png" alt="开怀大笑"><div class="cap">开怀大笑</div></div>
+    <div class="item"><img src="assets/exp_angry.png" alt="生气鼓脸"><div class="cap">生气鼓脸</div></div>
+    <div class="item"><img src="assets/exp_curious.png" alt="歪头疑惑"><div class="cap">歪头疑惑</div></div>
+    <div class="item"><img src="assets/exp_shy.png" alt="害羞脸红"><div class="cap">害羞脸红</div></div>
+  </div>
+</section>
+
+<section id="motion">
+  <h2 class="sec-title">动态瞬间</h2>
+  <p class="sec-sub">图生视频 · 眨眼与挥手的问候</p>
+  <div class="video-wrap">
+    <video src="assets/video.mp4" controls loop muted autoplay playsinline></video>
+  </div>
+</section>
+
+<footer>
+  角色设定与全部素材由 AI 辅助创作 · OC 创意项目演示<br>
+  <b>屿棠</b> — 云海邮差 · 2026
+</footer>
+
+<div id="lb"><img id="lb-img" src="" alt="预览"></div>
+
+<script type="module">
+async function boot(){
+  let THREE, OrbitControls;
+  try{
+    const probe = document.createElement('canvas');
+    const gl = probe.getContext('webgl2', {failIfMajorPerformanceCaveat:true}) || probe.getContext('webgl', {failIfMajorPerformanceCaveat:true});
+    if(!gl) throw new Error('no-webgl');
+    THREE = await import('three');
+    ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
+  }catch(e){ document.body.classList.add('no3d'); return; }
+
+const container = document.getElementById('hero');
+let renderer;
+try{ renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true }); }
+catch(e){ document.body.classList.add('no3d'); return; }
+renderer.domElement.addEventListener('webglcontextlost', e => { e.preventDefault(); document.body.classList.add('no3d'); });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, container.clientWidth/container.clientHeight, .1, 100);
+camera.position.set(0, 0.4, 7.5);
+
+new THREE.TextureLoader().load('assets/sky.jpg', t => {
+  t.colorSpace = THREE.SRGBColorSpace;
+  scene.background = t;
+});
+
+scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+const sun = new THREE.DirectionalLight(0xfff2dd, 1.6);
+sun.position.set(3, 5, 4);
+scene.add(sun);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = .06;
+controls.enablePan = false;
+controls.minDistance = 4.5;
+controls.maxDistance = 12;
+controls.minPolarAngle = Math.PI*.3;
+controls.maxPolarAngle = Math.PI*.62;
+controls.autoRotate = true;
+controls.autoRotateSpeed = .8;
+renderer.domElement.addEventListener('pointerdown', () => controls.autoRotate = false, { once:false });
+
+// character cutout plane
+let character = null;
+new THREE.TextureLoader().load('assets/cutout.png', t => {
+  t.colorSpace = THREE.SRGBColorSpace;
+  const aspect = 1024/1536;
+  const geo = new THREE.PlaneGeometry(3.4*aspect, 3.4);
+  const mat = new THREE.MeshBasicMaterial({ map:t, transparent:true, side:THREE.DoubleSide, depthWrite:false });
+  character = new THREE.Mesh(geo, mat);
+  character.position.y = -.2;
+  scene.add(character);
+});
+
+// soft cloud sprites (parallax depth)
+function cloudTexture(){
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d');
+  const rg = g.createRadialGradient(64,64,8,64,64,62);
+  rg.addColorStop(0,'rgba(255,255,255,.95)');
+  rg.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle = rg; g.fillRect(0,0,128,128);
+  return new THREE.CanvasTexture(c);
+}
+const cloudTex = cloudTexture();
+const clouds = [];
+const rand = (a,b) => a + Math.random()*(b-a);
+for(let i=0;i<16;i++){
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:cloudTex, transparent:true, opacity:rand(.25,.6), depthWrite:false }));
+  s.position.set(rand(-7,7), rand(-3.4,-1.2), rand(-6,3));
+  const sc = rand(2.5,6);
+  s.scale.set(sc, sc*.55, 1);
+  clouds.push({ s, v:rand(.05,.22) });
+  scene.add(s);
+}
+
+// drifting feathers
+const featherTex = (() => {
+  const c = document.createElement('canvas'); c.width = 32; c.height = 64;
+  const g = c.getContext('2d');
+  g.fillStyle = 'rgba(255,255,255,.95)';
+  g.beginPath(); g.ellipse(16,32,7,26,0,0,Math.PI*2); g.fill();
+  return new THREE.CanvasTexture(c);
+})();
+const feathers = [];
+for(let i=0;i<10;i++){
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:featherTex, transparent:true, opacity:rand(.5,.9), depthWrite:false }));
+  s.position.set(rand(-6,6), rand(-2,4), rand(-4,2));
+  s.scale.set(.22,.44,1);
+  feathers.push({ s, fall:rand(.15,.4), sway:rand(.5,1.4), phase:rand(0,6.28) });
+  scene.add(s);
+}
+
+const clock = new THREE.Clock();
+function tick(){
+  requestAnimationFrame(tick);
+  const t = clock.getElapsedTime();
+  if(character){
+    character.position.y = -.2 + Math.sin(t*1.2)*.08;
+    character.rotation.y = Math.sin(t*.6)*.12;
+  }
+  for(const c of clouds){ c.s.position.x += c.v*.016; if(c.s.position.x > 8) c.s.position.x = -8; }
+  for(const f of feathers){
+    f.s.position.y -= f.fall*.016;
+    f.s.position.x += Math.sin(t*f.sway + f.phase)*.002;
+    if(f.s.position.y < -3.2){ f.s.position.y = 4; f.s.position.x = rand(-6,6); }
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+tick();
+
+addEventListener('resize', () => {
+  camera.aspect = container.clientWidth/container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+});
+}
+boot();
+
+// lightbox
+const lb = document.getElementById('lb'), lbImg = document.getElementById('lb-img');
+document.querySelectorAll('.gallery .item').forEach(el => {
+  el.addEventListener('click', () => {
+    lbImg.src = el.querySelector('img').src;
+    lb.style.display = 'flex';
+  });
+});
+lb.addEventListener('click', () => lb.style.display = 'none');
+</script>
+</body>
+</html>
