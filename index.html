@@ -13,14 +13,12 @@
   html{scroll-behavior:smooth}
   body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
 
-  /* ---------- 顶部导航 ---------- */
   nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;
       align-items:center;padding:14px 28px;backdrop-filter:blur(10px);background:rgba(253,243,240,.7)}
   nav .logo{font-weight:700;color:var(--plum);letter-spacing:1px}
   nav a{color:var(--ink);text-decoration:none;margin-left:20px;font-size:14px;opacity:.75}
   nav a:hover{opacity:1;color:var(--plum)}
 
-  /* ---------- 桌宠舞台 ---------- */
   #stage{position:relative;height:100vh;min-height:620px;
     background:linear-gradient(180deg,#fdeef4 0%,#fdf6ee 55%,#f6e3d8 55.2%,#f3dccf 100%);}
   #stage::before{content:"";position:absolute;left:6%;top:10%;width:340px;height:340px;border-radius:50%;
@@ -33,14 +31,12 @@
   #loading .bar i{display:block;height:100%;width:0;background:var(--pink);transition:width .2s}
   #loading p{font-size:13px;opacity:.6}
 
-  /* 台词气泡 */
   #bubble{position:absolute;z-index:15;max-width:240px;padding:10px 16px;border-radius:18px 18px 18px 4px;
     background:#fff;box-shadow:0 6px 24px rgba(160,75,122,.18);font-size:14px;line-height:1.5;
     opacity:0;transform:translateY(6px) scale(.9);transform-origin:left bottom;
     transition:opacity .25s,transform .25s;pointer-events:none}
   #bubble.show{opacity:1;transform:translateY(0) scale(1)}
 
-  /* 名字牌（可编辑） */
   #nametag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:15;
     background:rgba(255,255,255,.85);border:2px solid var(--pink-soft);border-radius:999px;
     padding:8px 22px;font-size:15px;color:var(--plum);box-shadow:0 4px 18px rgba(160,75,122,.12)}
@@ -53,7 +49,35 @@
 
   .stage-tip{position:absolute;right:24px;bottom:22px;z-index:15;font-size:12px;color:var(--ink);opacity:.5;text-align:right;line-height:1.8}
 
-  /* ---------- 内容区 ---------- */
+  /* ---------- 聊天面板 ---------- */
+  #chat-toggle{position:absolute;left:24px;bottom:22px;z-index:16;border:none;cursor:pointer;
+    background:#fff;color:var(--plum);border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;
+    box-shadow:0 6px 20px rgba(160,75,122,.18);transition:transform .15s}
+  #chat-toggle:hover{transform:translateY(-2px)}
+  #chat{position:absolute;left:24px;bottom:74px;z-index:16;width:300px;max-width:78vw;
+    background:rgba(255,255,255,.94);border-radius:18px;box-shadow:0 10px 34px rgba(160,75,122,.22);
+    display:none;flex-direction:column;overflow:hidden}
+  #chat.open{display:flex}
+  #chat-head{padding:10px 14px;background:var(--pink-soft);color:var(--plum);font-size:13px;font-weight:600;
+    display:flex;justify-content:space-between;align-items:center}
+  #chat-head label{font-weight:400;font-size:11px;opacity:.75;display:flex;align-items:center;gap:4px;cursor:pointer}
+  #chat-log{padding:10px 12px;height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+  .msg{max-width:85%;padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.55;word-break:break-word}
+  .msg.pet{background:#fdeef5;color:var(--ink);border-bottom-left-radius:4px;align-self:flex-start}
+  .msg.user{background:var(--plum);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+  .msg.sys{background:transparent;color:#b49aas;font-size:11px;align-self:center;padding:2px}
+  .typing i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--plum);margin-right:3px;
+    animation:tp 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes tp{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+  #chat-row{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #f6e3ec}
+  #chat-in{flex:1;border:1px solid #efd3e0;border-radius:999px;padding:8px 14px;font-size:13px;outline:none}
+  #chat-in:focus{border-color:var(--pink)}
+  #chat-send{border:none;background:var(--plum);color:#fff;border-radius:999px;padding:8px 16px;
+    font-size:13px;cursor:pointer}
+  .online-note{font-size:10px;color:#b49aas;padding:0 12px 8px;display:none}
+  #chat.online .online-note{display:block}
+
   section{max-width:960px;margin:0 auto;padding:90px 24px}
   h2{font-size:26px;color:var(--plum);margin-bottom:8px}
   .sub{opacity:.55;font-size:14px;margin-bottom:32px}
@@ -84,36 +108,46 @@
 <body>
 
 <nav>
-  <div class="logo">🎀 OC 陪伴小屋</div>
+  <div class="logo">🎀 Yimire 陪伴小屋</div>
   <div><a href="#stage">桌宠</a><a href="#profile">档案</a><a href="#check">形象核对</a><a href="#gallery">图鉴</a></div>
 </nav>
 
-<!-- ================= 桌宠舞台 ================= -->
 <header id="stage">
   <canvas id="pet-canvas"></canvas>
-  <div id="loading"><div class="bar"><i id="loadbar"></i></div><p>正在叫醒 ta …</p></div>
+  <div id="loading"><div class="bar"><i id="loadbar"></i></div><p>正在叫醒 Yimire …</p></div>
   <div id="bubble"></div>
   <div id="nametag">名字：<span contenteditable="true" id="petname" spellcheck="false">Yimire</span><span class="hint">可编辑</span></div>
-  <div id="fallback"><img id="fallback-img" src="assets/body.png" alt="OC"><p>当前环境不支持 WebGL，已切换静态模式</p></div>
-  <div class="stage-tip">悬停：注视你 · 点击：互动<br>拖拽：转身 · 双击：惊喜<br>不理 ta 一会儿会打瞌睡哦</div>
+  <div id="fallback"><img id="fallback-img" src="assets/body.png" alt="Yimire"><p>当前环境不支持 WebGL，已切换静态模式</p></div>
+  <div class="stage-tip">悬停：注视你 · 点击：互动<br>拖拽：转身 · 双击：惊喜<br>💬 点左下角和 Yimire 聊天</div>
+
+  <button id="chat-toggle">💬 和 Yimire 聊天</button>
+  <div id="chat">
+    <div id="chat-head"><span>Yimire</span>
+      <label><input type="checkbox" id="online-brain"> 在线大脑</label>
+    </div>
+    <div id="chat-log"></div>
+    <div class="online-note">在线模式会把对话内容发送到第三方免费接口（text.pollinations.ai），请勿输入隐私信息。</div>
+    <div id="chat-row">
+      <input id="chat-in" maxlength="120" placeholder="说点什么…（试试夸她）">
+      <button id="chat-send">发送</button>
+    </div>
+  </div>
 </header>
 
-<!-- ================= 档案 ================= -->
 <section id="profile">
   <h2>角色档案</h2><p class="sub">Character Profile</p>
   <div class="cards">
     <div class="card"><h3>基本设定</h3>
-      <p>樱花粉低双马尾的元气少女，青绿色大眼睛，头顶一根倔强的呆毛。围着紫红长围巾，穿着米白系带开衫与蓝色百褶裙，腿套上的爱心和缎带是 ta 的标志性搭配。</p></div>
+      <p>樱花粉低双马尾的元气少女，青绿色大眼睛，头顶一根倔强的呆毛。围着紫红长围巾，穿着米白系带开衫与蓝色百褶裙，腿套上的爱心和缎带是 Yimire 的标志性搭配。</p></div>
     <div class="card"><h3>性格印象</h3>
-      <ul><li>开朗爱笑，好奇心旺盛</li><li>喜欢收集可爱的发夹与缎带</li><li>有点冒失，但永远元气满满</li></ul></div>
+      <ul><li>开朗爱笑，好奇心旺盛</li><li>喜欢收集可爱的发夹与缎带</li><li>有点冒失，但永远元气满满</li><li>被夸会害羞，被冷落会打瞌睡</li></ul></div>
     <div class="card"><h3>互动图鉴</h3>
-      <ul><li>移动鼠标 —— ta 会转头看着你</li><li>点一下 —— 开心得跳起来</li><li>按住拖拽 —— 给 ta 转个身</li><li>双击 —— 有小心心送给你</li><li>放着不管 —— ta 会站着打瞌睡</li></ul></div>
+      <ul><li>💬 聊天 —— 左下角对话框，她会回应你</li><li>移动鼠标 —— 她会转头看着你</li><li>点一下 —— 开心得跳起来</li><li>按住拖拽 —— 给她转个身</li><li>双击 —— 有小心心送给你</li><li>放着不管 —— 她会站着打瞌睡</li></ul></div>
   </div>
 </section>
 
-<!-- ================= 形象核对 ================= -->
 <section id="check">
-  <h2>形象核对表</h2><p class="sub">3D 形象与参考图逐项比对</p>
+  <h2>形象核对表</h2><p class="sub">形象与参考图逐项比对</p>
   <table class="check">
     <tr><th>部位</th><th>参考图特征</th><th>核对</th></tr>
     <tr><td>发型</td><td>樱花粉低双马尾 + 白色毛绒球发圈 + 头顶呆毛</td><td>✓ 一致</td></tr>
@@ -124,20 +158,19 @@
     <tr><td>下装</td><td>蓝色百褶短裙</td><td>✓ 一致</td></tr>
     <tr><td>袜子</td><td>白色过膝袜 + 粉色大腿绑带</td><td>✓ 一致</td></tr>
     <tr><td>足部</td><td>白色泡泡腿套 + 粉丝带 + 爱心装饰</td><td>✓ 一致</td></tr>
-    <tr class="warn"><td>表情</td><td>参考图为张嘴笑；3D 化为安静微笑（含闭眼版）</td><td>△ 风格化调整</td></tr>
+    <tr class="warn"><td>表情</td><td>参考图为张嘴笑；装配版为安静微笑（含闭眼版）</td><td>△ 风格化调整</td></tr>
   </table>
 </section>
 
-<!-- ================= 图鉴 ================= -->
 <section id="gallery">
   <h2>图鉴</h2><p class="sub">Gallery · 点击放大</p>
   <div class="gallery">
-    <figure><img src="assets/reference.jpg" alt="OC 设定参考图"><figcaption>设定参考图（正 / 背面）</figcaption></figure>
-    <figure><img src="assets/clean_pose.png" alt="去水印素体立绘"><figcaption>AI 重绘素体立绘（3D 化输入）</figcaption></figure>
+    <figure><img src="assets/reference.jpg" alt="Yimire 设定参考图"><figcaption>设定参考图（正 / 背面）</figcaption></figure>
+    <figure><img src="assets/clean_pose.png" alt="去水印素体立绘"><figcaption>AI 重绘素体立绘（装配输入）</figcaption></figure>
   </div>
 </section>
 
-<footer>Made with ♥ by WorkBuddy · Three.js 分层装配桌宠</footer>
+<footer>Made with ♥ by WorkBuddy · Live2D 式分层装配桌宠</footer>
 <div id="lightbox"><img id="lightbox-img"></div>
 
 <script type="importmap">
@@ -146,7 +179,7 @@
 </script>
 
 <script>
-/* ---------------- 通用：灯箱 / 名字持久化 ---------------- */
+/* ---------------- 灯箱 / 名字持久化 ---------------- */
 const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lightbox-img');
 document.querySelectorAll('.gallery figure').forEach(f =>
   f.addEventListener('click', () => { lbImg.src = f.querySelector('img').src; lb.style.display = 'flex'; }));
@@ -158,28 +191,24 @@ if (saved) nameEl.textContent = saved;
 nameEl.addEventListener('input', () => localStorage.setItem('oc-pet-name', nameEl.textContent.trim()));
 function petName(){ const n = nameEl.textContent.trim(); return n || 'Yimire'; }
 
-/* ---------------- 台词 ---------------- */
-const LINES = {
-  hello:  ['你好呀！今天也来陪我玩啦？', '嘿嘿，见到你真开心～', '欢迎回到小屋！'],
-  click:  ['哇！被戳到了～', '再点一下嘛，就一下！', '嘿嘿，好痒！', '我跳得高不高？'],
-  drag:   ['哇——转起来了！', '慢一点慢一点，头晕啦～', '后面也很好看吧？'],
-  dbl:    ['送你一颗小心心 💗', '最喜欢你了！', '这是秘密惊喜哦'],
-  sleep:  ['（站着睡着了……）', 'Zzz……蛋糕……好好吃……'],
-  wake:   ['啊！我没睡着！真的！', '你回来啦？我一直在等你哦'],
-  idle:   ['今天天气真好呀', '想喝点热可可……', '你在看哪里呀？']
-};
-const pick = a => a[Math.floor(Math.random() * a.length)];
-
+/* ---------------- 台词气泡（带打字效果） ---------------- */
 const bubble = document.getElementById('bubble');
-let bubbleTimer = null;
-function say(text, ms = 2600){
-  bubble.textContent = text;
+let bubbleTimer = null, typeTimer = null;
+function say(text, ms = 2800, type = false){
+  clearTimeout(bubbleTimer); clearInterval(typeTimer);
   bubble.classList.add('show');
-  clearTimeout(bubbleTimer);
-  bubbleTimer = setTimeout(() => bubble.classList.remove('show'), ms);
+  if (type){
+    bubble.textContent = '';
+    let i = 0;
+    typeTimer = setInterval(() => {
+      bubble.textContent = text.slice(0, ++i);
+      if (i >= text.length) clearInterval(typeTimer);
+    }, 42);
+  } else bubble.textContent = text;
+  bubbleTimer = setTimeout(() => bubble.classList.remove('show'), ms + (type ? text.length * 42 : 0));
 }
 
-/* ---------------- WebGL 探测 ---------------- */
+/* ---------------- 环境探测 ---------------- */
 function webglOK(){
   try{ const c = document.createElement('canvas');
     return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); }
@@ -189,7 +218,7 @@ function useFallback(){
   document.getElementById('pet-canvas').style.display = 'none';
   document.getElementById('fallback').style.display = 'flex';
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('fallback-img').addEventListener('click', () => say(pick(LINES.click)));
+  document.getElementById('fallback-img').addEventListener('click', () => say('嘿嘿，好痒！'));
 }
 </script>
 
@@ -203,12 +232,11 @@ catch(e){ useFallback(); return; }
 const canvas = document.getElementById('pet-canvas');
 const stage = document.getElementById('stage');
 let renderer;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-} catch(e){ useFallback(); return; }
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true }); }
+catch(e){ useFallback(); return; }
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); useFallback(); });
 
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
 renderer.setSize(stage.clientWidth, stage.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -216,7 +244,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(32, stage.clientWidth/stage.clientHeight, .1, 50);
 camera.position.set(0, 1.35, 4.6);
 
-/* ---------------- 加载素材 ---------------- */
+/* ---------------- 素材加载 ---------------- */
 const loader = new THREE.TextureLoader();
 const loadbar = document.getElementById('loadbar');
 const files = ['body.png','head.png','head_closed.png','tail_l.png','tail_r.png'];
@@ -227,10 +255,9 @@ await Promise.all(files.map(f => new Promise((res, rej) =>
     loadbar.style.width = (++loaded / files.length * 100) + '%'; res(); }, undefined, rej)
 ).catch(() => { useFallback(); throw new Error('tex fail'); })));
 
-/* ---------------- 角色装配（Live2D 式分层） ---------------- */
+/* ---------------- 角色装配 ---------------- */
 const BW = meta.body_size[0], BH = meta.body_size[1];
-const CH = 2.3;                       // 角色世界高度
-const S = CH / BH;                    // 像素 → 世界
+const CH = 2.3, S = CH / BH;
 const charGroup = new THREE.Group();
 scene.add(charGroup);
 
@@ -240,25 +267,30 @@ function makePlane(texture, rectFrac, pivotFrac, z){
   const geo = new THREE.PlaneGeometry(w, h);
   const mat = new THREE.MeshBasicMaterial({ map:texture, transparent:true, alphaTest:.04, side:THREE.DoubleSide });
   const mesh = new THREE.Mesh(geo, mat);
-  // pivot: 将 pivot 点移到几何原点（注意取负号）
   const px = (pivotFrac[0]*BW - rx0) * S - w/2;
   const py = h/2 - (pivotFrac[1]*BH - ry0) * S;
   geo.translate(-px, -py, 0);
-  // pivot 在角色空间中的位置（角色脚底 y=0，中心 x=0）
   mesh.position.set((pivotFrac[0]-0.5)*BW*S, (1-pivotFrac[1])*BH*S, z);
   return mesh;
 }
 
-const body = makePlane(tex['body.png'], [0,0,1,1], [0.5,1,], 0); // pivot 脚底
-body.position.set(0, 0, 0);
-const head  = makePlane(tex['head.png'],        meta.head.rect_frac,   meta.head.pivot_frac,   .05);
-const headC = makePlane(tex['head_closed.png'], meta.head.rect_frac,   meta.head.pivot_frac,   .055);
-const tailL = makePlane(tex['tail_l.png'],      meta.tail_l.rect_frac, meta.tail_l.pivot_frac, .04);
-const tailR = makePlane(tex['tail_r.png'],      meta.tail_r.rect_frac, meta.tail_r.pivot_frac, .04);
-headC.material.opacity = 0;
-charGroup.add(body, tailL, tailR, head, headC);
+const body = makePlane(tex['body.png'], [0,0,1,1], [0.5,1], 0);
+const head  = makePlane(tex['head.png'],        meta.head.rect_frac,   meta.head.pivot_frac,   .02);
+const headC = makePlane(tex['head_closed.png'], meta.head.rect_frac,   meta.head.pivot_frac,   .023);
+const tailL = makePlane(tex['tail_l.png'],      meta.tail_l.rect_frac, meta.tail_l.pivot_frac, .012);
+const tailR = makePlane(tex['tail_r.png'],      meta.tail_r.rect_frac, meta.tail_r.pivot_frac, .012);
 
-/* ---------------- 小场景：地毯 + 抱枕 + 尘埃 ---------------- */
+/* 防穿模①：闭眼层与双马尾都挂为头部的子节点——头动则马尾/表情跟随，
+   附件永不脱节；马尾自身再叠加弹簧延迟，形成自然跟随 */
+function attach(child){
+  child.position.sub(head.position);
+  head.add(child);
+}
+headC.material.opacity = 0;
+charGroup.add(body, head);
+attach(headC); attach(tailL); attach(tailR);
+
+/* ---------------- 小场景 ---------------- */
 const rug = new THREE.Mesh(new THREE.CircleGeometry(1.15, 48),
   new THREE.MeshBasicMaterial({ color:0xf6c9da, transparent:true, opacity:.85 }));
 rug.rotation.x = -Math.PI/2; rug.scale.y = .62; rug.position.y = .01; scene.add(rug);
@@ -280,51 +312,23 @@ dustGeo.setAttribute('position', new THREE.BufferAttribute(dp,3));
 const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color:0xffffff, size:.025, transparent:true, opacity:.7 }));
 scene.add(dust);
 
-/* 软阴影 */
 const shCv = document.createElement('canvas'); shCv.width = shCv.height = 128;
 const sg = shCv.getContext('2d');
 const grd = sg.createRadialGradient(64,64,6,64,64,62);
 grd.addColorStop(0,'rgba(90,50,70,.38)'); grd.addColorStop(1,'rgba(90,50,70,0)');
 sg.fillStyle = grd; sg.fillRect(0,0,128,128);
-const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.1,.62),
-  new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(shCv), transparent:true }));
+const shadowMat = new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(shCv), transparent:true });
+const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.1,.62), shadowMat);
 shadow.rotation.x = -Math.PI/2; shadow.position.y = .015; scene.add(shadow);
 
-/* ---------------- 交互状态机 ---------------- */
-const state = {
-  mouseX:0, mouseY:0, hover:false, dragging:false, dragVel:0, rotY:0,
-  bounce:0, blinkT: 2 + Math.random()*2.5, blinkPh:0, sleeping:false, lastAct: performance.now(),
-  idleTalkT: 14 + Math.random()*10,
-};
-const ray = new THREE.Raycaster(), mv = new THREE.Vector2();
-
-function act(){ state.lastAct = performance.now(); if (state.sleeping){ state.sleeping = false; say(pick(LINES.wake)); } }
-
-stage.addEventListener('pointermove', e => {
-  const r = stage.getBoundingClientRect();
-  state.mouseX = ((e.clientX - r.left)/r.width)*2 - 1;
-  state.mouseY = -(((e.clientY - r.top)/r.height)*2 - 1);
-  if (state.dragging){
-    const dx = e.movementX || 0;
-    state.dragVel = dx * .004; act();
-  }
-});
-stage.addEventListener('pointerdown', e => {
-  state.dragging = true; state.dragVel = 0; state.downX = e.clientX; state.downT = performance.now(); act();
-});
-addEventListener('pointerup', e => {
-  if (!state.dragging) return; state.dragging = false;
-  const quick = performance.now() - state.downT < 220 && Math.abs(e.clientX - state.downX) < 8;
-  if (quick && state.hover){ state.bounce = 1; say(pick(LINES.click)); }
-});
-stage.addEventListener('dblclick', () => { if (state.hover){ heartBurst(); say(pick(LINES.dbl)); act(); } });
-
-/* 小心心粒子（DOM） */
-function heartBurst(){
+/* ---------------- 情绪粒子 ---------------- */
+function burst(kind){
+  const icons = { heart:'💗', angry:'💢', curious:'❓', music:'🎵', star:'✨' };
   const r = stage.getBoundingClientRect();
   for (let i=0;i<8;i++){
     const h = document.createElement('div');
-    h.textContent = '💗'; h.style.cssText = `position:absolute;z-index:16;font-size:${14+Math.random()*14}px;
+    h.textContent = icons[kind] || '💗';
+    h.style.cssText = `position:absolute;z-index:16;font-size:${14+Math.random()*14}px;
       left:${r.width/2 + (Math.random()-.5)*80}px;top:${r.height*.42}px;pointer-events:none;
       transition:all ${0.9+Math.random()*.5}s cubic-bezier(.2,.7,.4,1);opacity:1`;
     stage.appendChild(h);
@@ -332,44 +336,186 @@ function heartBurst(){
     setTimeout(() => h.remove(), 1600);
   }
 }
+const heartBurst = () => burst('heart');
+
+/* ---------------- 状态机 ---------------- */
+const state = {
+  mouseX:0, mouseY:0, mouseDirty:true, hover:false, dragging:false, dragVel:0, rotY:0,
+  bounce:0, blinkT: 2 + Math.random()*2.5, blinkPh:0, sleeping:false, sleepForce:0,
+  wiggle:0, lastAct: performance.now(), idleTalkT: 14 + Math.random()*10,
+};
+const ray = new THREE.Raycaster(), mv = new THREE.Vector2(), TMPV = new THREE.Vector3();
+
+function act(){ state.lastAct = performance.now(); if (state.sleeping && !state.sleepForce){ state.sleeping = false; say('啊！我没睡着！真的！'); } }
+
+stage.addEventListener('pointermove', e => {
+  const r = stage.getBoundingClientRect();
+  state.mouseX = ((e.clientX - r.left)/r.width)*2 - 1;
+  state.mouseY = -(((e.clientY - r.top)/r.height)*2 - 1);
+  state.mouseDirty = true;
+  if (state.dragging){ state.dragVel = (e.movementX || 0) * .004; act(); }
+});
+stage.addEventListener('pointerdown', e => {
+  state.dragging = true; state.dragVel = 0; state.downX = e.clientX; state.downT = performance.now(); act();
+});
+addEventListener('pointerup', e => {
+  if (!state.dragging) return; state.dragging = false;
+  const quick = performance.now() - state.downT < 220 && Math.abs(e.clientX - state.downX) < 8;
+  if (quick && state.hover){ state.bounce = 1; say(['哇！被戳到了～','再点一下嘛，就一下！','嘿嘿，好痒！','我跳得高不高？'][Math.floor(Math.random()*4)]); }
+});
+stage.addEventListener('dblclick', () => { if (state.hover){ heartBurst(); say(['送你一颗小心心 💗','最喜欢你了！','这是秘密惊喜哦'][Math.floor(Math.random()*3)]); act(); } });
+
+/* ---------------- 情绪 → 动作映射 ---------------- */
+function react(emo){
+  switch(emo){
+    case 'happy':   state.bounce = 1; if (Math.random()<.5) burst('heart'); break;
+    case 'shy':     state.wiggle = 1; burst('heart'); break;
+    case 'angry':   state.wiggle = 1; burst('angry'); break;
+    case 'curious': state.wiggle = .6; burst('curious'); break;
+    case 'music':   state.bounce = 1; burst('music'); break;
+    case 'star':    state.bounce = 1; burst('star'); break;
+    case 'sleepy':  state.sleepForce = 3.5; state.sleeping = true; break;
+    case 'spin':    state.dragVel = .09; break;
+  }
+}
+
+/* ================================================================
+   对话引擎（本地模式：意图识别 + 情绪 + 动作；无需联网）
+   ================================================================ */
+let userName = localStorage.getItem('oc-user-name') || '';
+const BRAIN = [
+  { re:/你好|您好|嗨|哈喽|hi|hello|早|早上好|晚上好|下午好/i, emo:'happy', ans:['你好呀！今天也想我了吗？','嗨嗨～见到你元气满满！','你来啦！我一直在等你哦'] },
+  { re:/你叫什么|名字|你是谁|介绍一下/i, emo:'curious', ans:['我叫 {pet}！是你的专属桌宠哦～','我是 {pet}，樱花粉头发就是我啦！'] },
+  { re:/叫我(.{1,8})|我是(.{1,8})[啊呀哦]?$/i, emo:'happy', save:true, ans:['记住啦，{user}！以后就这么叫你～','{user}！好名字，我记住啦'] },
+  { re:/可爱|好看|漂亮|喜欢|爱|棒|厉害|乖/i, emo:'shy', ans:['诶嘿嘿……被你夸得都不好意思了 💗','真的吗？好开心！转个圈圈～','你这么说，我要害羞啦'] },
+  { re:/笨蛋|讨厌|丑|烦|滚/i, emo:'angry', ans:['哼！我不理你了……骗你的啦','过分！我要生气了哦，哄不好的那种！','呜……你欺负我 💢'] },
+  { re:/吃|饿|饭|蛋糕|奶茶|可可/i, emo:'happy', ans:['说到吃的我就精神了！想吃草莓蛋糕～','热可可配小饼干，是冬天的绝配！','我最近在收集甜品店情报哦'] },
+  { re:/睡|困|累|晚安|熬夜/i, emo:'sleepy', ans:['困了就好好休息呀……我也有点困了','晚安……做个甜甜的梦哦 💤','不许熬夜！快去睡觉啦'] },
+  { re:/天气|下雨|晴天|冷|热/i, emo:'curious', ans:['今天适合出门收集可爱发夹！','不管晴天雨天，有小屋就很舒服呀'] },
+  { re:/唱|歌|跳|舞/i, emo:'music', ans:['啦啦啦～🎵 好听吗？','给你跳一小段！嘿嘿'] },
+  { re:/学习|作业|考试|工作|上班|上课/i, emo:'star', ans:['加油加油！我会在这里陪着你的 ✨','累了就回来找我玩，随时欢迎！','认真学习的样子最帅了！'] },
+  { re:/再见|拜拜|走了|溜了/i, emo:'shy', ans:['要走了吗……记得回来看我哦','拜拜～我会想你的！'] },
+  { re:/多大|几岁|年龄/i, emo:'curious', ans:['女孩子的年龄是秘密哦～','永远十六岁！（大概）'] },
+  { re:/抱|摸|揉|捏/i, emo:'shy', ans:['哇……轻一点啦 💗','嘿嘿，头发要被你揉乱了'] },
+  { re:/转圈|转个圈|转一圈/i, emo:'spin', ans:['看我的！呼——晕晕的……','转圈圈是我的拿手好戏！'] },
+  { re:/谢谢|感谢/i, emo:'happy', ans:['不客气！这是我应该做的～','嘿嘿，能帮上忙就好'] },
+  { re:/为什么|怎么|什么|吗\?|？|\?$/i, emo:'curious', ans:['这个问题嘛……让我想想……不知道诶！','嗯——是个深奥的问题呢！你去查查然后教我？'] },
+  { re:/[\s\S]*/, emo:'happy', ans:['嗯嗯！然后呢然后呢？','哦哦，原来是这样！','我在认真听哦～','继续说嘛，我很好奇！'] },
+];
+function think(text){
+  for (const b of BRAIN){
+    const m = text.match(b.re);
+    if (m){
+      if (b.save){ userName = (m[1] || m[2] || '').replace(/[啊呀哦]$/,''); localStorage.setItem('oc-user-name', userName); }
+      let a = b.ans[Math.floor(Math.random()*b.ans.length)];
+      a = a.replace('{pet}', petName()).replace('{user}', userName || '你');
+      return { say:a, emo:b.emo };
+    }
+  }
+}
+async function thinkOnline(text){
+  const sys = `你是${petName()}，一个樱花粉低双马尾的元气少女桌宠，住在用户的网页小屋里。性格：开朗爱笑、好奇心旺盛、有点冒失、被夸会害羞。请用简短可爱的中文口语回复用户，不超过60字，可以带一个颜文字或emoji。${userName?'用户的名字叫'+userName+'。':''}`;
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 9000);
+  try{
+    const r = await fetch('https://text.pollinations.ai/' + encodeURIComponent(sys + '\n\n用户说：' + text), { signal:ctrl.signal });
+    clearTimeout(to);
+    if (!r.ok) throw 0;
+    let t = (await r.text()).trim().replace(/\n+/g,' ').slice(0, 120);
+    if (!t) throw 0;
+    const emo = /害羞|💗|喜欢|开心|嘿嘿/.test(t) ? 'shy' :
+                /生气|哼|💢/.test(t) ? 'angry' :
+                /睡|困|💤/.test(t) ? 'sleepy' :
+                /？|\?|什么|为什么/.test(t) ? 'curious' : 'happy';
+    return { say:t, emo };
+  }catch(e){ clearTimeout(to); return null; }
+}
+
+/* ---------------- 聊天 UI ---------------- */
+const chatBox = document.getElementById('chat');
+const chatLog = document.getElementById('chat-log');
+const chatIn = document.getElementById('chat-in');
+const onlineCk = document.getElementById('online-brain');
+document.getElementById('chat-toggle').addEventListener('click', () => {
+  chatBox.classList.toggle('open');
+  if (chatBox.classList.contains('open') && !chatLog.children.length){
+    addMsg('pet', `你好呀！我是 ${petName()}，想和我聊点什么？`);
+  }
+  chatIn.focus();
+});
+onlineCk.addEventListener('change', () => chatBox.classList.toggle('online', onlineCk.checked));
+function addMsg(who, text){
+  const d = document.createElement('div');
+  d.className = 'msg ' + who; d.textContent = text;
+  chatLog.appendChild(d); chatLog.scrollTop = chatLog.scrollHeight;
+  while (chatLog.children.length > 40) chatLog.firstChild.remove();
+}
+let thinking = false;
+async function sendChat(){
+  const text = chatIn.value.trim();
+  if (!text || thinking) return;
+  thinking = true; act();
+  addMsg('user', text); chatIn.value = '';
+  const tp = document.createElement('div');
+  tp.className = 'msg pet typing'; tp.innerHTML = '<i></i><i></i><i></i>';
+  chatLog.appendChild(tp); chatLog.scrollTop = chatLog.scrollHeight;
+  let reply = null;
+  if (onlineCk.checked){
+    reply = await thinkOnline(text);
+    if (!reply) addMsg('sys', '（在线大脑开小差了，已切换本地回复）');
+  }
+  if (!reply) reply = think(text);
+  await new Promise(s => setTimeout(s, 500 + Math.random()*600));
+  tp.remove();
+  addMsg('pet', reply.say);
+  say(reply.say, Math.min(5200, 2200 + reply.say.length*60), true);
+  react(reply.emo);
+  thinking = false;
+}
+document.getElementById('chat-send').addEventListener('click', sendChat);
+chatIn.addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+/* ---------------- 性能：离屏/隐藏时暂停渲染 ---------------- */
+let inView = true;
+new IntersectionObserver(es => { inView = es[0].isIntersecting; }, { threshold:.02 }).observe(stage);
 
 /* ---------------- 动画循环 ---------------- */
 const clock = new THREE.Clock();
 let firstFrame = true;
 function tick(){
   requestAnimationFrame(tick);
-  const t = clock.getElapsedTime(), dt = Math.min(clock.getDelta() + .016, .05);
+  if (document.hidden || !inView) return;
+  const t = clock.getElapsedTime();
+  const dt = Math.min(clock.getDelta() + .016, .05);
 
-  /* hover 检测 */
-  mv.set(state.mouseX, state.mouseY);
-  ray.setFromCamera(mv, camera);
-  state.hover = ray.intersectObjects([body, head], false).length > 0;
-  canvas.style.cursor = state.hover ? 'pointer' : 'default';
+  if (state.mouseDirty){
+    state.mouseDirty = false;
+    mv.set(state.mouseX, state.mouseY);
+    ray.setFromCamera(mv, camera);
+    state.hover = ray.intersectObjects([body, head], false).length > 0;
+    canvas.style.cursor = state.hover ? 'pointer' : 'default';
+  }
 
-  /* 呼吸 + 重心摆动 */
+  /* 呼吸 */
   const br = Math.sin(t*2.1)*.008;
   body.scale.y = 1 + br; body.scale.x = 1 - br*.6;
   body.position.y = Math.sin(t*2.1)*.006;
 
-  /* 头部注视（阻尼跟随鼠标） */
+  /* 头部注视（点头幅度收紧，防止与围巾接缝露馅——防穿模③） */
   const k = state.sleeping ? 0 : 1;
-  const targetY = THREE.MathUtils.clamp(state.mouseX*.55, -.5, .5)*k;
-  const targetX = THREE.MathUtils.clamp(-state.mouseY*.22 + .02, -.3, .3)*k;
+  const targetY = THREE.MathUtils.clamp(state.mouseX*.5, -.45, .45)*k;
+  const targetX = THREE.MathUtils.clamp(-state.mouseY*.16 + .02, -.2, .22)*k;
   head.rotation.y += (targetY - head.rotation.y)*.07;
   head.rotation.x += (targetX - head.rotation.x)*.07;
-  headC.rotation.copy(head.rotation);
-  const tilt = state.sleeping ? .34 : Math.sin(t*1.3)*.03;
-  head.rotation.z += ((tilt + (state.hover ? -.06 : 0)) - head.rotation.z)*.06;
-  headC.rotation.copy(head.rotation);
+  let tilt = state.sleeping ? .3 : Math.sin(t*1.3)*.03;
+  if (state.wiggle > 0){ state.wiggle -= dt*1.6; tilt += Math.sin(t*22)*.09*Math.max(0, state.wiggle); }
+  head.rotation.z += ((tilt + (state.hover ? -.05 : 0)) - head.rotation.z)*.08;
 
-  /* 双马尾弹簧延迟跟随 */
-  const lag = head.rotation.y*1.25 + Math.sin(t*1.7)*.045;
-  tailL.rotation.z += ((-lag*.8 + Math.sin(t*1.9)*.05) - tailL.rotation.z)*.045;
-  tailR.rotation.z += ((-lag*.8 + Math.sin(t*1.9+1.4)*.05) - tailR.rotation.z)*.045;
-  tailL.rotation.y += (head.rotation.y*.5 - tailL.rotation.y)*.05;
-  tailR.rotation.y += (head.rotation.y*.5 - tailR.rotation.y)*.05;
+  /* 双马尾：继承头部旋转（防穿模①），本地弹簧反向叠加形成延迟感 */
+  tailL.rotation.z += ((-(head.rotation.y)*.5 + Math.sin(t*1.9)*.05) - tailL.rotation.z)*.06;
+  tailR.rotation.z += ((-(head.rotation.y)*.5 + Math.sin(t*1.9+1.4)*.05) - tailR.rotation.z)*.06;
 
-  /* 眨眼：闭眼层淡入淡出 */
+  /* 眨眼 */
   state.blinkT -= dt;
   if (state.blinkT <= 0){ state.blinkPh = .24; state.blinkT = state.sleeping ? .9 : 2.2 + Math.random()*3; }
   if (state.blinkPh > 0){
@@ -378,49 +524,57 @@ function tick(){
     headC.material.opacity = state.sleeping ? 1 : Math.max(0, Math.min(1, p));
   } else headC.material.opacity = state.sleeping ? 1 : 0;
 
-  /* 点击弹跳（挤压拉伸） */
+  /* 点击弹跳 + 阴影跟随（防视觉错位） */
   if (state.bounce > 0){
     state.bounce -= dt*2.2;
-    const b = Math.max(0, state.bounce);
-    charGroup.position.y = Math.sin(b*Math.PI)*.28;
-    charGroup.scale.y = 1 + Math.sin(b*Math.PI)*.12;
-    charGroup.scale.x = 1 - Math.sin(b*Math.PI)*.07;
-  } else { charGroup.position.y *= .8; charGroup.scale.set(1,1,1); }
+    const b = Math.max(0, state.bounce), j = Math.sin(b*Math.PI);
+    charGroup.position.y = j*.26;
+    charGroup.scale.y = 1 + j*.12;
+    charGroup.scale.x = 1 - j*.07;
+    const sh = 1 - j*.35;
+    shadow.scale.set(sh, sh, 1);
+    shadowMat.opacity = 1 - j*.45;
+  } else { charGroup.position.y *= .8; charGroup.scale.set(1,1,1); shadow.scale.set(1,1,1); shadowMat.opacity = 1; }
 
-  /* 拖拽旋转 + 惯性 + 回正 */
+  /* 拖拽旋转（幅度收紧防露边——防穿模②）+ 惯性回正 */
   if (state.dragging){ state.rotY += state.dragVel; state.dragVel *= .82; }
   else { state.rotY += state.dragVel; state.dragVel *= .94; state.rotY += (0 - state.rotY)*.05; }
-  state.rotY = THREE.MathUtils.clamp(state.rotY, -.55, .55);
+  state.rotY = THREE.MathUtils.clamp(state.rotY, -.4, .4);
   charGroup.rotation.y = state.rotY;
-  if (state.dragging && Math.random() < .008) say(pick(LINES.drag), 1600);
 
   /* 打瞌睡 */
-  if (!state.sleeping && performance.now() - state.lastAct > 40000){ state.sleeping = true; say(pick(LINES.sleep), 4200); }
+  if (state.sleepForce > 0){ state.sleepForce -= dt; if (state.sleepForce <= 0){ state.sleeping = false; } }
+  else if (!state.sleeping && performance.now() - state.lastAct > 40000){
+    state.sleeping = true; say(['（站着睡着了……）','Zzz……蛋糕……好好吃……'][Math.floor(Math.random()*2)], 4200);
+  }
 
   /* 闲置自言自语 */
   state.idleTalkT -= dt;
-  if (state.idleTalkT <= 0 && !state.sleeping){ say(pick(LINES.idle)); state.idleTalkT = 16 + Math.random()*14; }
+  if (state.idleTalkT <= 0 && !state.sleeping){
+    say(['今天天气真好呀','想喝点热可可……','你在看哪里呀？','戳我一下嘛～'][Math.floor(Math.random()*4)]);
+    state.idleTalkT = 16 + Math.random()*14;
+  }
 
-  /* 尘埃漂浮 + 相机视差 */
+  /* 尘埃 + 相机视差 */
   dust.rotation.y = t*.02;
   dust.position.y = Math.sin(t*.4)*.05;
   camera.position.x += (state.mouseX*.22 - camera.position.x)*.04;
   camera.position.y += ((1.35 + state.mouseY*.1) - camera.position.y)*.04;
   camera.lookAt(0, 1.12, 0);
 
-  /* 气泡跟随头部 */
-  const hp = new THREE.Vector3(); head.getWorldPosition(hp); hp.y += .62; hp.x += .35;
-  hp.project(camera);
+  /* 气泡跟随 */
+  head.getWorldPosition(TMPV); TMPV.y += .62; TMPV.x += .35;
+  TMPV.project(camera);
   const r = stage.getBoundingClientRect();
-  bubble.style.left = ((hp.x*.5+.5)*r.width) + 'px';
-  bubble.style.top  = ((-hp.y*.5+.5)*r.height) + 'px';
+  bubble.style.left = ((TMPV.x*.5+.5)*r.width) + 'px';
+  bubble.style.top  = ((-TMPV.y*.5+.5)*r.height) + 'px';
 
   renderer.render(scene, camera);
   if (firstFrame){
     firstFrame = false;
     const l = document.getElementById('loading');
     l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500);
-    setTimeout(() => say(pick(LINES.hello), 3200), 700);
+    setTimeout(() => say(`你好呀！我是 ${petName()}，点左下角可以和我聊天哦～`, 3800), 700);
   }
 }
 tick();
