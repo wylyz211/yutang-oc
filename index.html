@@ -3,266 +3,434 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>屿棠 · 云海邮差 | 角色主页</title>
-<script type="importmap">
-{ "imports": {
-  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-} }
-</script>
+<title>Yimire · 陪伴小屋</title>
 <style>
   :root{
-    --mint:#7FD8C4; --teal:#0F6E56; --amber:#BA7517; --cream:#FAF7F0;
-    --ink:#2C2C2A; --muted:#6B6B66; --card:#FFFFFF; --line:rgba(44,44,42,.12);
+    --pink:#f2a9c4; --pink-soft:#f9d3e0; --cream:#fff8f0; --blue:#7fa8d9;
+    --plum:#a04b7a; --ink:#5a4653; --bg:#fdf3f0;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--cream);color:var(--ink);line-height:1.7}
-  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:24px;padding:14px 32px;background:rgba(250,247,240,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  nav .logo{font-weight:600;font-size:17px;color:var(--teal);letter-spacing:2px}
-  nav a{color:var(--muted);text-decoration:none;font-size:14px}
-  nav a:hover{color:var(--teal)}
-  nav .sp{flex:1}
-  #hero{position:relative;height:100vh;min-height:560px;background:url('assets/sky.jpg') center/cover no-repeat}
-  #hero canvas{display:block;width:100%;height:100%}
-  .hero-static{display:none;position:absolute;inset:0;overflow:hidden}
-  .hero-static img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:88%;filter:drop-shadow(0 12px 30px rgba(15,110,86,.25));animation:floaty 4s ease-in-out infinite}
-  body.no3d .hero-static{display:block}
-  @keyframes floaty{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
-  .hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 8vw;pointer-events:none}
-  .hero-copy h1{font-size:clamp(44px,7vw,84px);font-weight:600;color:var(--teal);letter-spacing:6px;text-shadow:0 2px 24px rgba(255,255,255,.9)}
-  .hero-copy .quote{margin-top:14px;font-size:clamp(15px,1.6vw,20px);color:var(--ink);background:rgba(255,255,255,.75);padding:8px 18px;border-radius:99px;border:1px solid var(--line)}
-  .hero-copy .hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);background:rgba(255,255,255,.7);padding:6px 16px;border-radius:99px}
-  .tag{position:absolute;top:86px;right:5vw;font-size:12px;color:var(--teal);background:rgba(255,255,255,.8);border:1px solid var(--mint);padding:4px 12px;border-radius:99px}
-  section{max-width:1080px;margin:0 auto;padding:88px 24px}
-  .sec-title{font-size:26px;font-weight:600;color:var(--teal);margin-bottom:8px}
-  .sec-sub{color:var(--muted);font-size:14px;margin-bottom:36px}
-  .profile-grid{display:grid;grid-template-columns:280px 1fr;gap:32px;align-items:start}
-  .profile-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  .profile-card img{width:100%;display:block}
-  .profile-card .cap{padding:12px 16px;font-size:13px;color:var(--muted);text-align:center}
-  .traits{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 26px}
-  .traits span{background:#EAF6F1;color:var(--teal);border:1px solid var(--mint);border-radius:99px;padding:5px 14px;font-size:13px}
-  .profile-text p{margin-bottom:14px;font-size:15px}
-  .profile-text b{color:var(--teal)}
-  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .gallery .item{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .25s}
-  .gallery .item:hover{transform:translateY(-4px)}
-  .gallery img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-  .gallery .item.wide{grid-column:span 1}
-  .gallery .item.main{grid-row:span 2}
-  .gallery .item.main img{aspect-ratio:1024/1536;height:100%;object-fit:cover}
-  .gallery .cap{padding:10px 12px;font-size:13px;color:var(--muted)}
-  #lb{position:fixed;inset:0;background:rgba(20,20,20,.72);display:none;align-items:center;justify-content:center;z-index:99;cursor:zoom-out}
-  #lb img{max-width:88vw;max-height:88vh;border-radius:12px}
-  .video-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:760px}
-  video{width:100%;border-radius:10px;display:block}
-  footer{border-top:1px solid var(--line);margin-top:40px;padding:36px 24px;text-align:center;color:var(--muted);font-size:13px}
-  footer b{color:var(--teal)}
-  @media(max-width:760px){
-    .profile-grid{grid-template-columns:1fr}
-    .gallery{grid-template-columns:repeat(2,1fr)}
-    nav{padding:12px 16px;gap:14px}
-    section{padding:64px 18px}
-  }
+  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+
+  /* ---------- 顶部导航 ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;
+      align-items:center;padding:14px 28px;backdrop-filter:blur(10px);background:rgba(253,243,240,.7)}
+  nav .logo{font-weight:700;color:var(--plum);letter-spacing:1px}
+  nav a{color:var(--ink);text-decoration:none;margin-left:20px;font-size:14px;opacity:.75}
+  nav a:hover{opacity:1;color:var(--plum)}
+
+  /* ---------- 桌宠舞台 ---------- */
+  #stage{position:relative;height:100vh;min-height:620px;
+    background:linear-gradient(180deg,#fdeef4 0%,#fdf6ee 55%,#f6e3d8 55.2%,#f3dccf 100%);}
+  #stage::before{content:"";position:absolute;left:6%;top:10%;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,250,235,.95) 0%,rgba(255,240,210,.4) 45%,rgba(255,240,210,0) 72%);
+    pointer-events:none}
+  #pet-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #loading{position:absolute;inset:0;display:flex;flex-direction:column;gap:14px;align-items:center;
+    justify-content:center;background:var(--bg);z-index:20;transition:opacity .5s}
+  #loading .bar{width:220px;height:6px;border-radius:3px;background:#efd9e2;overflow:hidden}
+  #loading .bar i{display:block;height:100%;width:0;background:var(--pink);transition:width .2s}
+  #loading p{font-size:13px;opacity:.6}
+
+  /* 台词气泡 */
+  #bubble{position:absolute;z-index:15;max-width:240px;padding:10px 16px;border-radius:18px 18px 18px 4px;
+    background:#fff;box-shadow:0 6px 24px rgba(160,75,122,.18);font-size:14px;line-height:1.5;
+    opacity:0;transform:translateY(6px) scale(.9);transform-origin:left bottom;
+    transition:opacity .25s,transform .25s;pointer-events:none}
+  #bubble.show{opacity:1;transform:translateY(0) scale(1)}
+
+  /* 名字牌（可编辑） */
+  #nametag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:15;
+    background:rgba(255,255,255,.85);border:2px solid var(--pink-soft);border-radius:999px;
+    padding:8px 22px;font-size:15px;color:var(--plum);box-shadow:0 4px 18px rgba(160,75,122,.12)}
+  #nametag [contenteditable]{outline:none;border-bottom:1px dashed var(--pink);min-width:60px;display:inline-block;text-align:center}
+  #nametag .hint{font-size:11px;opacity:.45;margin-left:8px}
+
+  #fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+  #fallback img{height:72vh;animation:floaty 3.2s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  .stage-tip{position:absolute;right:24px;bottom:22px;z-index:15;font-size:12px;color:var(--ink);opacity:.5;text-align:right;line-height:1.8}
+
+  /* ---------- 内容区 ---------- */
+  section{max-width:960px;margin:0 auto;padding:90px 24px}
+  h2{font-size:26px;color:var(--plum);margin-bottom:8px}
+  .sub{opacity:.55;font-size:14px;margin-bottom:32px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 6px 24px rgba(160,75,122,.08)}
+  .card h3{font-size:16px;color:var(--plum);margin-bottom:10px}
+  .card p,.card li{font-size:14px;line-height:1.9;opacity:.85}
+  .card ul{padding-left:18px}
+
+  table.check{width:100%;border-collapse:collapse;background:#fff;border-radius:18px;overflow:hidden;
+    box-shadow:0 6px 24px rgba(160,75,122,.08);font-size:14px}
+  table.check th,table.check td{padding:12px 16px;text-align:left;border-bottom:1px solid #f6e3ec}
+  table.check th{background:var(--pink-soft);color:var(--plum);font-weight:600}
+  table.check td:last-child{color:#3d9960;font-weight:600}
+  table.check tr.warn td:last-child{color:#c78a2b}
+
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .gallery figure{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 24px rgba(160,75,122,.08);cursor:zoom-in}
+  .gallery img{width:100%;display:block}
+  .gallery figcaption{padding:12px 16px;font-size:13px;opacity:.65}
+
+  #lightbox{position:fixed;inset:0;background:rgba(40,25,35,.85);display:none;align-items:center;justify-content:center;z-index:99;cursor:zoom-out}
+  #lightbox img{max-width:92vw;max-height:92vh;border-radius:12px}
+
+  footer{text-align:center;padding:40px;font-size:13px;opacity:.45}
 </style>
 </head>
 <body>
+
 <nav>
-  <span class="logo">屿棠</span>
-  <a href="#profile">档案</a><a href="#gallery">图鉴</a><a href="#motion">动态</a>
-  <span class="sp"></span>
-  <a href="#hero">回到云海</a>
+  <div class="logo">🎀 OC 陪伴小屋</div>
+  <div><a href="#stage">桌宠</a><a href="#profile">档案</a><a href="#check">形象核对</a><a href="#gallery">图鉴</a></div>
 </nav>
 
-<header id="hero">
-  <div class="hero-static"><img src="assets/cutout.png" alt="屿棠"></div>
-  <div class="hero-copy">
-    <h1>屿 棠</h1>
-    <div class="quote">「下一封信，一定送到云海的那一头。」</div>
-    <div class="hint">拖拽旋转 · 滚轮缩放 · 与屿棠在云海相遇</div>
-  </div>
-  <div class="tag">WebGL 2.5D 立体展示</div>
+<!-- ================= 桌宠舞台 ================= -->
+<header id="stage">
+  <canvas id="pet-canvas"></canvas>
+  <div id="loading"><div class="bar"><i id="loadbar"></i></div><p>正在叫醒 ta …</p></div>
+  <div id="bubble"></div>
+  <div id="nametag">名字：<span contenteditable="true" id="petname" spellcheck="false">Yimire</span><span class="hint">可编辑</span></div>
+  <div id="fallback"><img id="fallback-img" src="assets/body.png" alt="OC"><p>当前环境不支持 WebGL，已切换静态模式</p></div>
+  <div class="stage-tip">悬停：注视你 · 点击：互动<br>拖拽：转身 · 双击：惊喜<br>不理 ta 一会儿会打瞌睡哦</div>
 </header>
 
+<!-- ================= 档案 ================= -->
 <section id="profile">
-  <h2 class="sec-title">角色档案</h2>
-  <p class="sec-sub">云海邮差 · 浮空群岛邮政局 003 号邮递员</p>
-  <div class="profile-grid">
-    <div class="profile-card">
-      <img src="assets/main.png" alt="屿棠立绘">
-      <div class="cap">官方立绘 · 全身</div>
-    </div>
-    <div class="profile-text">
-      <div class="traits"><span>元气</span><span>方向感为负</span><span>信件狂热</span><span>羽毛耳饰</span><span>薄荷青</span></div>
-      <p><b>外貌：</b>齐肩薄荷青渐变短发，琥珀色的大眼睛，右耳别着白色羽毛耳饰——那是邮政局给每位邮差的「信风罗盘」，据说迷路时会轻轻颤动（虽然对屿棠好像不太灵）。</p>
-      <p><b>性格：</b>元气满满的爱笑少女，好奇心比邮差包还重。优点是无论暴雨还是逆风，答应送的信一定会送到；缺点是……在没有信风罗盘的地方，她能把「直走」走出九种走法。</p>
-      <p><b>世界观：</b>世界是一片无边云海，人们住在浮空群岛上。岛屿之间没有桥，只有邮差——他们乘着信风，把思念装进帆布邮差包，在群岛之间穿梭飞行。屿棠是 003 号邮递员，也是局里最年轻、笑声最大的一位。</p>
-      <p><b>口头禅：</b>「下一封信，一定送到云海的那一头。」</p>
-    </div>
+  <h2>角色档案</h2><p class="sub">Character Profile</p>
+  <div class="cards">
+    <div class="card"><h3>基本设定</h3>
+      <p>樱花粉低双马尾的元气少女，青绿色大眼睛，头顶一根倔强的呆毛。围着紫红长围巾，穿着米白系带开衫与蓝色百褶裙，腿套上的爱心和缎带是 ta 的标志性搭配。</p></div>
+    <div class="card"><h3>性格印象</h3>
+      <ul><li>开朗爱笑，好奇心旺盛</li><li>喜欢收集可爱的发夹与缎带</li><li>有点冒失，但永远元气满满</li></ul></div>
+    <div class="card"><h3>互动图鉴</h3>
+      <ul><li>移动鼠标 —— ta 会转头看着你</li><li>点一下 —— 开心得跳起来</li><li>按住拖拽 —— 给 ta 转个身</li><li>双击 —— 有小心心送给你</li><li>放着不管 —— ta 会站着打瞌睡</li></ul></div>
   </div>
 </section>
 
+<!-- ================= 形象核对 ================= -->
+<section id="check">
+  <h2>形象核对表</h2><p class="sub">3D 形象与参考图逐项比对</p>
+  <table class="check">
+    <tr><th>部位</th><th>参考图特征</th><th>核对</th></tr>
+    <tr><td>发型</td><td>樱花粉低双马尾 + 白色毛绒球发圈 + 头顶呆毛</td><td>✓ 一致</td></tr>
+    <tr><td>发饰</td><td>刘海一字夹（蓝 / 黄）</td><td>✓ 一致</td></tr>
+    <tr><td>瞳色</td><td>青绿色（湖绿）</td><td>✓ 一致</td></tr>
+    <tr><td>围巾</td><td>紫红/品红长围巾 + 白色毛球</td><td>✓ 一致</td></tr>
+    <tr><td>上衣</td><td>米白针织开衫 + 粉色缎带交叉系带</td><td>✓ 一致</td></tr>
+    <tr><td>下装</td><td>蓝色百褶短裙</td><td>✓ 一致</td></tr>
+    <tr><td>袜子</td><td>白色过膝袜 + 粉色大腿绑带</td><td>✓ 一致</td></tr>
+    <tr><td>足部</td><td>白色泡泡腿套 + 粉丝带 + 爱心装饰</td><td>✓ 一致</td></tr>
+    <tr class="warn"><td>表情</td><td>参考图为张嘴笑；3D 化为安静微笑（含闭眼版）</td><td>△ 风格化调整</td></tr>
+  </table>
+</section>
+
+<!-- ================= 图鉴 ================= -->
 <section id="gallery">
-  <h2 class="sec-title">表情图鉴</h2>
-  <p class="sec-sub">点击查看大图 · AI 生成，角色一致性锁定</p>
+  <h2>图鉴</h2><p class="sub">Gallery · 点击放大</p>
   <div class="gallery">
-    <div class="item main"><img src="assets/main.png" alt="立绘"><div class="cap">主立绘</div></div>
-    <div class="item"><img src="assets/exp_happy.png" alt="开怀大笑"><div class="cap">开怀大笑</div></div>
-    <div class="item"><img src="assets/exp_angry.png" alt="生气鼓脸"><div class="cap">生气鼓脸</div></div>
-    <div class="item"><img src="assets/exp_curious.png" alt="歪头疑惑"><div class="cap">歪头疑惑</div></div>
-    <div class="item"><img src="assets/exp_shy.png" alt="害羞脸红"><div class="cap">害羞脸红</div></div>
+    <figure><img src="assets/reference.jpg" alt="OC 设定参考图"><figcaption>设定参考图（正 / 背面）</figcaption></figure>
+    <figure><img src="assets/clean_pose.png" alt="去水印素体立绘"><figcaption>AI 重绘素体立绘（3D 化输入）</figcaption></figure>
   </div>
 </section>
 
-<section id="motion">
-  <h2 class="sec-title">动态瞬间</h2>
-  <p class="sec-sub">图生视频 · 眨眼与挥手的问候</p>
-  <div class="video-wrap">
-    <video src="assets/video.mp4" controls loop muted autoplay playsinline></video>
-  </div>
-</section>
+<footer>Made with ♥ by WorkBuddy · Three.js 分层装配桌宠</footer>
+<div id="lightbox"><img id="lightbox-img"></div>
 
-<footer>
-  角色设定与全部素材由 AI 辅助创作 · OC 创意项目演示<br>
-  <b>屿棠</b> — 云海邮差 · 2026
-</footer>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
 
-<div id="lb"><img id="lb-img" src="" alt="预览"></div>
+<script>
+/* ---------------- 通用：灯箱 / 名字持久化 ---------------- */
+const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lightbox-img');
+document.querySelectorAll('.gallery figure').forEach(f =>
+  f.addEventListener('click', () => { lbImg.src = f.querySelector('img').src; lb.style.display = 'flex'; }));
+lb.addEventListener('click', () => lb.style.display = 'none');
+
+const nameEl = document.getElementById('petname');
+const saved = localStorage.getItem('oc-pet-name');
+if (saved) nameEl.textContent = saved;
+nameEl.addEventListener('input', () => localStorage.setItem('oc-pet-name', nameEl.textContent.trim()));
+function petName(){ const n = nameEl.textContent.trim(); return n || 'Yimire'; }
+
+/* ---------------- 台词 ---------------- */
+const LINES = {
+  hello:  ['你好呀！今天也来陪我玩啦？', '嘿嘿，见到你真开心～', '欢迎回到小屋！'],
+  click:  ['哇！被戳到了～', '再点一下嘛，就一下！', '嘿嘿，好痒！', '我跳得高不高？'],
+  drag:   ['哇——转起来了！', '慢一点慢一点，头晕啦～', '后面也很好看吧？'],
+  dbl:    ['送你一颗小心心 💗', '最喜欢你了！', '这是秘密惊喜哦'],
+  sleep:  ['（站着睡着了……）', 'Zzz……蛋糕……好好吃……'],
+  wake:   ['啊！我没睡着！真的！', '你回来啦？我一直在等你哦'],
+  idle:   ['今天天气真好呀', '想喝点热可可……', '你在看哪里呀？']
+};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+const bubble = document.getElementById('bubble');
+let bubbleTimer = null;
+function say(text, ms = 2600){
+  bubble.textContent = text;
+  bubble.classList.add('show');
+  clearTimeout(bubbleTimer);
+  bubbleTimer = setTimeout(() => bubble.classList.remove('show'), ms);
+}
+
+/* ---------------- WebGL 探测 ---------------- */
+function webglOK(){
+  try{ const c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); }
+  catch(e){ return false; }
+}
+function useFallback(){
+  document.getElementById('pet-canvas').style.display = 'none';
+  document.getElementById('fallback').style.display = 'flex';
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('fallback-img').addEventListener('click', () => say(pick(LINES.click)));
+}
+</script>
 
 <script type="module">
-async function boot(){
-  let THREE, OrbitControls;
-  try{
-    const probe = document.createElement('canvas');
-    const gl = probe.getContext('webgl2', {failIfMajorPerformanceCaveat:true}) || probe.getContext('webgl', {failIfMajorPerformanceCaveat:true});
-    if(!gl) throw new Error('no-webgl');
-    THREE = await import('three');
-    ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
-  }catch(e){ document.body.classList.add('no3d'); return; }
+(async () => {
+if (!webglOK()){ useFallback(); return; }
+let THREE;
+try { THREE = await import('three'); }
+catch(e){ useFallback(); return; }
 
-const container = document.getElementById('hero');
+const canvas = document.getElementById('pet-canvas');
+const stage = document.getElementById('stage');
 let renderer;
-try{ renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true }); }
-catch(e){ document.body.classList.add('no3d'); return; }
-renderer.domElement.addEventListener('webglcontextlost', e => { e.preventDefault(); document.body.classList.add('no3d'); });
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+} catch(e){ useFallback(); return; }
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); useFallback(); });
+
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(container.clientWidth, container.clientHeight);
-container.appendChild(renderer.domElement);
+renderer.setSize(stage.clientWidth, stage.clientHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(42, container.clientWidth/container.clientHeight, .1, 100);
-camera.position.set(0, 0.4, 7.5);
+const camera = new THREE.PerspectiveCamera(32, stage.clientWidth/stage.clientHeight, .1, 50);
+camera.position.set(0, 1.35, 4.6);
 
-new THREE.TextureLoader().load('assets/sky.jpg', t => {
-  t.colorSpace = THREE.SRGBColorSpace;
-  scene.background = t;
+/* ---------------- 加载素材 ---------------- */
+const loader = new THREE.TextureLoader();
+const loadbar = document.getElementById('loadbar');
+const files = ['body.png','head.png','head_closed.png','tail_l.png','tail_r.png'];
+const tex = {}; let loaded = 0;
+const meta = await (await fetch('assets/meta.json')).json();
+await Promise.all(files.map(f => new Promise((res, rej) =>
+  loader.load('assets/' + f, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; tex[f] = t;
+    loadbar.style.width = (++loaded / files.length * 100) + '%'; res(); }, undefined, rej)
+).catch(() => { useFallback(); throw new Error('tex fail'); })));
+
+/* ---------------- 角色装配（Live2D 式分层） ---------------- */
+const BW = meta.body_size[0], BH = meta.body_size[1];
+const CH = 2.3;                       // 角色世界高度
+const S = CH / BH;                    // 像素 → 世界
+const charGroup = new THREE.Group();
+scene.add(charGroup);
+
+function makePlane(texture, rectFrac, pivotFrac, z){
+  const rx0 = rectFrac[0]*BW, ry0 = rectFrac[1]*BH, rx1 = rectFrac[2]*BW, ry1 = rectFrac[3]*BH;
+  const w = (rx1-rx0)*S, h = (ry1-ry0)*S;
+  const geo = new THREE.PlaneGeometry(w, h);
+  const mat = new THREE.MeshBasicMaterial({ map:texture, transparent:true, alphaTest:.04, side:THREE.DoubleSide });
+  const mesh = new THREE.Mesh(geo, mat);
+  // pivot: 将 pivot 点移到几何原点（注意取负号）
+  const px = (pivotFrac[0]*BW - rx0) * S - w/2;
+  const py = h/2 - (pivotFrac[1]*BH - ry0) * S;
+  geo.translate(-px, -py, 0);
+  // pivot 在角色空间中的位置（角色脚底 y=0，中心 x=0）
+  mesh.position.set((pivotFrac[0]-0.5)*BW*S, (1-pivotFrac[1])*BH*S, z);
+  return mesh;
+}
+
+const body = makePlane(tex['body.png'], [0,0,1,1], [0.5,1,], 0); // pivot 脚底
+body.position.set(0, 0, 0);
+const head  = makePlane(tex['head.png'],        meta.head.rect_frac,   meta.head.pivot_frac,   .05);
+const headC = makePlane(tex['head_closed.png'], meta.head.rect_frac,   meta.head.pivot_frac,   .055);
+const tailL = makePlane(tex['tail_l.png'],      meta.tail_l.rect_frac, meta.tail_l.pivot_frac, .04);
+const tailR = makePlane(tex['tail_r.png'],      meta.tail_r.rect_frac, meta.tail_r.pivot_frac, .04);
+headC.material.opacity = 0;
+charGroup.add(body, tailL, tailR, head, headC);
+
+/* ---------------- 小场景：地毯 + 抱枕 + 尘埃 ---------------- */
+const rug = new THREE.Mesh(new THREE.CircleGeometry(1.15, 48),
+  new THREE.MeshBasicMaterial({ color:0xf6c9da, transparent:true, opacity:.85 }));
+rug.rotation.x = -Math.PI/2; rug.scale.y = .62; rug.position.y = .01; scene.add(rug);
+const rug2 = new THREE.Mesh(new THREE.CircleGeometry(.85, 48),
+  new THREE.MeshBasicMaterial({ color:0xfbe3ee, transparent:true, opacity:.9 }));
+rug2.rotation.x = -Math.PI/2; rug2.scale.y = .62; rug2.position.y = .02; scene.add(rug2);
+
+function cushion(x, z, r, color){
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 18),
+    new THREE.MeshBasicMaterial({ color, transparent:true, opacity:.95 }));
+  m.scale.y = .72; m.position.set(x, r*.6, z); scene.add(m); return m;
+}
+cushion(-1.35, -.5, .30, 0xffffff); cushion(-1.15, -.42, .20, 0xfff1f6); cushion(1.3, -.55, .26, 0xfdf0e2);
+
+const dustGeo = new THREE.BufferGeometry();
+const dustN = 60, dp = new Float32Array(dustN*3);
+for (let i=0;i<dustN;i++){ dp[i*3]=(Math.random()-.5)*5; dp[i*3+1]=Math.random()*2.8; dp[i*3+2]=(Math.random()-.5)*2; }
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dp,3));
+const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color:0xffffff, size:.025, transparent:true, opacity:.7 }));
+scene.add(dust);
+
+/* 软阴影 */
+const shCv = document.createElement('canvas'); shCv.width = shCv.height = 128;
+const sg = shCv.getContext('2d');
+const grd = sg.createRadialGradient(64,64,6,64,64,62);
+grd.addColorStop(0,'rgba(90,50,70,.38)'); grd.addColorStop(1,'rgba(90,50,70,0)');
+sg.fillStyle = grd; sg.fillRect(0,0,128,128);
+const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.1,.62),
+  new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(shCv), transparent:true }));
+shadow.rotation.x = -Math.PI/2; shadow.position.y = .015; scene.add(shadow);
+
+/* ---------------- 交互状态机 ---------------- */
+const state = {
+  mouseX:0, mouseY:0, hover:false, dragging:false, dragVel:0, rotY:0,
+  bounce:0, blinkT: 2 + Math.random()*2.5, blinkPh:0, sleeping:false, lastAct: performance.now(),
+  idleTalkT: 14 + Math.random()*10,
+};
+const ray = new THREE.Raycaster(), mv = new THREE.Vector2();
+
+function act(){ state.lastAct = performance.now(); if (state.sleeping){ state.sleeping = false; say(pick(LINES.wake)); } }
+
+stage.addEventListener('pointermove', e => {
+  const r = stage.getBoundingClientRect();
+  state.mouseX = ((e.clientX - r.left)/r.width)*2 - 1;
+  state.mouseY = -(((e.clientY - r.top)/r.height)*2 - 1);
+  if (state.dragging){
+    const dx = e.movementX || 0;
+    state.dragVel = dx * .004; act();
+  }
 });
-
-scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-const sun = new THREE.DirectionalLight(0xfff2dd, 1.6);
-sun.position.set(3, 5, 4);
-scene.add(sun);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = .06;
-controls.enablePan = false;
-controls.minDistance = 4.5;
-controls.maxDistance = 12;
-controls.minPolarAngle = Math.PI*.3;
-controls.maxPolarAngle = Math.PI*.62;
-controls.autoRotate = true;
-controls.autoRotateSpeed = .8;
-renderer.domElement.addEventListener('pointerdown', () => controls.autoRotate = false, { once:false });
-
-// character cutout plane
-let character = null;
-new THREE.TextureLoader().load('assets/cutout.png', t => {
-  t.colorSpace = THREE.SRGBColorSpace;
-  const aspect = 1024/1536;
-  const geo = new THREE.PlaneGeometry(3.4*aspect, 3.4);
-  const mat = new THREE.MeshBasicMaterial({ map:t, transparent:true, side:THREE.DoubleSide, depthWrite:false });
-  character = new THREE.Mesh(geo, mat);
-  character.position.y = -.2;
-  scene.add(character);
+stage.addEventListener('pointerdown', e => {
+  state.dragging = true; state.dragVel = 0; state.downX = e.clientX; state.downT = performance.now(); act();
 });
+addEventListener('pointerup', e => {
+  if (!state.dragging) return; state.dragging = false;
+  const quick = performance.now() - state.downT < 220 && Math.abs(e.clientX - state.downX) < 8;
+  if (quick && state.hover){ state.bounce = 1; say(pick(LINES.click)); }
+});
+stage.addEventListener('dblclick', () => { if (state.hover){ heartBurst(); say(pick(LINES.dbl)); act(); } });
 
-// soft cloud sprites (parallax depth)
-function cloudTexture(){
-  const c = document.createElement('canvas'); c.width = c.height = 128;
-  const g = c.getContext('2d');
-  const rg = g.createRadialGradient(64,64,8,64,64,62);
-  rg.addColorStop(0,'rgba(255,255,255,.95)');
-  rg.addColorStop(1,'rgba(255,255,255,0)');
-  g.fillStyle = rg; g.fillRect(0,0,128,128);
-  return new THREE.CanvasTexture(c);
-}
-const cloudTex = cloudTexture();
-const clouds = [];
-const rand = (a,b) => a + Math.random()*(b-a);
-for(let i=0;i<16;i++){
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:cloudTex, transparent:true, opacity:rand(.25,.6), depthWrite:false }));
-  s.position.set(rand(-7,7), rand(-3.4,-1.2), rand(-6,3));
-  const sc = rand(2.5,6);
-  s.scale.set(sc, sc*.55, 1);
-  clouds.push({ s, v:rand(.05,.22) });
-  scene.add(s);
+/* 小心心粒子（DOM） */
+function heartBurst(){
+  const r = stage.getBoundingClientRect();
+  for (let i=0;i<8;i++){
+    const h = document.createElement('div');
+    h.textContent = '💗'; h.style.cssText = `position:absolute;z-index:16;font-size:${14+Math.random()*14}px;
+      left:${r.width/2 + (Math.random()-.5)*80}px;top:${r.height*.42}px;pointer-events:none;
+      transition:all ${0.9+Math.random()*.5}s cubic-bezier(.2,.7,.4,1);opacity:1`;
+    stage.appendChild(h);
+    requestAnimationFrame(() => { h.style.transform = `translate(${(Math.random()-.5)*160}px,${-90-Math.random()*110}px) scale(${.6+Math.random()})`; h.style.opacity = '0'; });
+    setTimeout(() => h.remove(), 1600);
+  }
 }
 
-// drifting feathers
-const featherTex = (() => {
-  const c = document.createElement('canvas'); c.width = 32; c.height = 64;
-  const g = c.getContext('2d');
-  g.fillStyle = 'rgba(255,255,255,.95)';
-  g.beginPath(); g.ellipse(16,32,7,26,0,0,Math.PI*2); g.fill();
-  return new THREE.CanvasTexture(c);
-})();
-const feathers = [];
-for(let i=0;i<10;i++){
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:featherTex, transparent:true, opacity:rand(.5,.9), depthWrite:false }));
-  s.position.set(rand(-6,6), rand(-2,4), rand(-4,2));
-  s.scale.set(.22,.44,1);
-  feathers.push({ s, fall:rand(.15,.4), sway:rand(.5,1.4), phase:rand(0,6.28) });
-  scene.add(s);
-}
-
+/* ---------------- 动画循环 ---------------- */
 const clock = new THREE.Clock();
+let firstFrame = true;
 function tick(){
   requestAnimationFrame(tick);
-  const t = clock.getElapsedTime();
-  if(character){
-    character.position.y = -.2 + Math.sin(t*1.2)*.08;
-    character.rotation.y = Math.sin(t*.6)*.12;
-  }
-  for(const c of clouds){ c.s.position.x += c.v*.016; if(c.s.position.x > 8) c.s.position.x = -8; }
-  for(const f of feathers){
-    f.s.position.y -= f.fall*.016;
-    f.s.position.x += Math.sin(t*f.sway + f.phase)*.002;
-    if(f.s.position.y < -3.2){ f.s.position.y = 4; f.s.position.x = rand(-6,6); }
-  }
-  controls.update();
+  const t = clock.getElapsedTime(), dt = Math.min(clock.getDelta() + .016, .05);
+
+  /* hover 检测 */
+  mv.set(state.mouseX, state.mouseY);
+  ray.setFromCamera(mv, camera);
+  state.hover = ray.intersectObjects([body, head], false).length > 0;
+  canvas.style.cursor = state.hover ? 'pointer' : 'default';
+
+  /* 呼吸 + 重心摆动 */
+  const br = Math.sin(t*2.1)*.008;
+  body.scale.y = 1 + br; body.scale.x = 1 - br*.6;
+  body.position.y = Math.sin(t*2.1)*.006;
+
+  /* 头部注视（阻尼跟随鼠标） */
+  const k = state.sleeping ? 0 : 1;
+  const targetY = THREE.MathUtils.clamp(state.mouseX*.55, -.5, .5)*k;
+  const targetX = THREE.MathUtils.clamp(-state.mouseY*.22 + .02, -.3, .3)*k;
+  head.rotation.y += (targetY - head.rotation.y)*.07;
+  head.rotation.x += (targetX - head.rotation.x)*.07;
+  headC.rotation.copy(head.rotation);
+  const tilt = state.sleeping ? .34 : Math.sin(t*1.3)*.03;
+  head.rotation.z += ((tilt + (state.hover ? -.06 : 0)) - head.rotation.z)*.06;
+  headC.rotation.copy(head.rotation);
+
+  /* 双马尾弹簧延迟跟随 */
+  const lag = head.rotation.y*1.25 + Math.sin(t*1.7)*.045;
+  tailL.rotation.z += ((-lag*.8 + Math.sin(t*1.9)*.05) - tailL.rotation.z)*.045;
+  tailR.rotation.z += ((-lag*.8 + Math.sin(t*1.9+1.4)*.05) - tailR.rotation.z)*.045;
+  tailL.rotation.y += (head.rotation.y*.5 - tailL.rotation.y)*.05;
+  tailR.rotation.y += (head.rotation.y*.5 - tailR.rotation.y)*.05;
+
+  /* 眨眼：闭眼层淡入淡出 */
+  state.blinkT -= dt;
+  if (state.blinkT <= 0){ state.blinkPh = .24; state.blinkT = state.sleeping ? .9 : 2.2 + Math.random()*3; }
+  if (state.blinkPh > 0){
+    state.blinkPh -= dt;
+    const p = state.blinkPh > .12 ? 1 - (state.blinkPh-.12)/.12 : state.blinkPh/.12;
+    headC.material.opacity = state.sleeping ? 1 : Math.max(0, Math.min(1, p));
+  } else headC.material.opacity = state.sleeping ? 1 : 0;
+
+  /* 点击弹跳（挤压拉伸） */
+  if (state.bounce > 0){
+    state.bounce -= dt*2.2;
+    const b = Math.max(0, state.bounce);
+    charGroup.position.y = Math.sin(b*Math.PI)*.28;
+    charGroup.scale.y = 1 + Math.sin(b*Math.PI)*.12;
+    charGroup.scale.x = 1 - Math.sin(b*Math.PI)*.07;
+  } else { charGroup.position.y *= .8; charGroup.scale.set(1,1,1); }
+
+  /* 拖拽旋转 + 惯性 + 回正 */
+  if (state.dragging){ state.rotY += state.dragVel; state.dragVel *= .82; }
+  else { state.rotY += state.dragVel; state.dragVel *= .94; state.rotY += (0 - state.rotY)*.05; }
+  state.rotY = THREE.MathUtils.clamp(state.rotY, -.55, .55);
+  charGroup.rotation.y = state.rotY;
+  if (state.dragging && Math.random() < .008) say(pick(LINES.drag), 1600);
+
+  /* 打瞌睡 */
+  if (!state.sleeping && performance.now() - state.lastAct > 40000){ state.sleeping = true; say(pick(LINES.sleep), 4200); }
+
+  /* 闲置自言自语 */
+  state.idleTalkT -= dt;
+  if (state.idleTalkT <= 0 && !state.sleeping){ say(pick(LINES.idle)); state.idleTalkT = 16 + Math.random()*14; }
+
+  /* 尘埃漂浮 + 相机视差 */
+  dust.rotation.y = t*.02;
+  dust.position.y = Math.sin(t*.4)*.05;
+  camera.position.x += (state.mouseX*.22 - camera.position.x)*.04;
+  camera.position.y += ((1.35 + state.mouseY*.1) - camera.position.y)*.04;
+  camera.lookAt(0, 1.12, 0);
+
+  /* 气泡跟随头部 */
+  const hp = new THREE.Vector3(); head.getWorldPosition(hp); hp.y += .62; hp.x += .35;
+  hp.project(camera);
+  const r = stage.getBoundingClientRect();
+  bubble.style.left = ((hp.x*.5+.5)*r.width) + 'px';
+  bubble.style.top  = ((-hp.y*.5+.5)*r.height) + 'px';
+
   renderer.render(scene, camera);
+  if (firstFrame){
+    firstFrame = false;
+    const l = document.getElementById('loading');
+    l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500);
+    setTimeout(() => say(pick(LINES.hello), 3200), 700);
+  }
 }
 tick();
 
 addEventListener('resize', () => {
-  camera.aspect = container.clientWidth/container.clientHeight;
+  camera.aspect = stage.clientWidth/stage.clientHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setSize(stage.clientWidth, stage.clientHeight);
 });
-}
-boot();
-
-// lightbox
-const lb = document.getElementById('lb'), lbImg = document.getElementById('lb-img');
-document.querySelectorAll('.gallery .item').forEach(el => {
-  el.addEventListener('click', () => {
-    lbImg.src = el.querySelector('img').src;
-    lb.style.display = 'flex';
-  });
-});
-lb.addEventListener('click', () => lb.style.display = 'none');
+})();
 </script>
 </body>
 </html>
